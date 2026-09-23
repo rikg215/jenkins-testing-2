@@ -9,7 +9,6 @@ pipeline {
                 sh 'echo "starting CI/CD pipeline..."'
                 }
             }
-        }
 
         stage('npm build app build and versioning') {
             steps {
@@ -45,7 +44,8 @@ pipeline {
                     sh 'git add .'
                     sh 'git commit -m "ci: version bump"'
                     sh 'git push origin HEAD:main'
-            }
-        }
-    }
+               }
+           }
+       }
+   }
 }
