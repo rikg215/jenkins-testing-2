@@ -6,8 +6,7 @@ pipeline {
     stages {
         stage('init') {
             steps {
-                step {
-                    sh 'echo "starting CI/CD pipeline..."'
+                sh 'echo "starting CI/CD pipeline..."'
                 }
             }
         }
@@ -33,6 +32,7 @@ pipeline {
         }
 
         stage('commit to git') {
+            steps {
                 withCredentials([usernamePassword(credentialsId: 'jenkins-pat-2', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                     sh 'git config --global user.email "jenkins@example.com"'
                     sh 'git config --global user.name "jenkins"'
@@ -45,6 +45,7 @@ pipeline {
                     sh 'git add .'
                     sh 'git commit -m "ci: version bump"'
                     sh 'git push origin HEAD:main'
+               }
            }
        }
    }
