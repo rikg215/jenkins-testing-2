@@ -22,7 +22,7 @@ pipeline {
 
         stage('docker image build and versioning') {
             steps {
-                sh 'withCredentials([credentialsID:'rikg215', usernameVariable:'USER', passwordVariable: 'PASS'])' {
+                'withCredentials([credentialsID:'rikg215', usernameVariable:'USER', passwordVariable: 'PASS'])' {
                     sh "docker build -t rik215/bootcamp-test:${IMAGE_NAME} ."
                     sh 'echo $PASS | docker login -u $USER --password-stdin'
                     sh "docker push rik215/bootcamp-test:${IMAGE_NAME}"
