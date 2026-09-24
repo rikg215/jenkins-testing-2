@@ -1,6 +1,6 @@
 library identifier: 'jenkins-testing-shared-library@main', retriever: modernSCM(
     [$class: 'GitSCMSource',
-     remote: 'https://github.com/rikg215/jenkins-shared-library.git',
+     remote: 'https://github.com/rikg215/jenkins-testing-shared-library.git',
      credentialsId: 'jenkins-pat-2'])
 
 pipeline {
