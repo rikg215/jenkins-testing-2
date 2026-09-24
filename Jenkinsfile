@@ -1,55 +1,41 @@
 pipeline {
+    @Library('jenkins-shared-library-2')
+    def gv
+
     agent any
     tools {
         nodejs 'my-nodejs'
     }
     stages {
-        stage('init') {
+        stage(init) {
             steps {
-                sh 'echo "starting CI/CD pipeline..."'
-                }
-            }
-
-        stage('npm build app build and versioning') {
-            steps {
-                dir('app') {
-                    script {
-                        sh 'echo "building node app..."'
-                        sh 'npm version minor --no-git-tag-version'
-                        def version = sh (script: "node -p \"require('./package.json').version\"", returnStdout: true).trim()
-                        env.IMAGE_NAME = "$version-$BUILD_NUMBER"
-                        sh 'npm install'
-                    }
+                script {
+                    echo "beginning build and commit pipeline"
                 }
             }
         }
+        stage('npm build app build and versioning') {
+            steps {
+                script {
+                    buildApp()
+            }
+        }
+    }
 
         stage('docker image build and versioning') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'rik215', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh "docker build -t rik215/bootcamp-test:${IMAGE_NAME} ."
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    sh "docker push rik215/bootcamp-test:${IMAGE_NAME}"
+                script {
+                    buildImage(env.IMAGE_NAME)
                 }
             }
         }
 
         stage('commit to git') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'jenkins-pat-2', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-                    sh 'git config --global user.email "jenkins@example.com"'
-                    sh 'git config --global user.name "jenkins"'
-
-                    sh 'git status'
-                    sh 'git branch'
-                    sh 'git config --list'
-
-                    sh 'git remote set-url origin "https://${USER}:${PASS}@github.com/rikg215/jenkins-testing-2.git"'
-                    sh 'git add .'
-                    sh 'git commit -m "ci: version bump"'
-                    sh 'git push origin HEAD:main'
-               }
-           }
-       }
-   }
+                script {
+                    commitImage()
+                }
+            }
+        }
+    }
 }
