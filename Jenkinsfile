@@ -1,6 +1,8 @@
 pipeline {
-    @Library('jenkins-shared-library-2')
-    def gv
+    library identifier: 'jenkins-shared-library@main', retriever: modernSCM(
+        [$class: 'GitSCMSource',
+         remote: 'https://github.com/rikg215/jenkins-shared-library.git',
+         credentialsId: 'jenkins-pat-2'])
 
     agent any
     tools {
