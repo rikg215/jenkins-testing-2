@@ -13,9 +13,13 @@ pipeline {
         stage('npm build app build and versioning') {
             steps {
                 dir('app') {
-                    sh 'echo "building node app..."'
-                    sh 'npm version minor --no-git-tag-version'
-                    sh 'npm install'
+                    script {
+                        sh 'echo "building node app..."'
+                        sh 'npm version minor --no-git-tag-version'
+                        def version = sh ("node -p \"require('./package.json').version\"", returnStdout: true).trim()
+                        env.IMAGE_NAME = "$version-$BUILD_NUMBER"
+                        sh 'npm install'
+                    }
                 }
             }
         }
